@@ -136,6 +136,17 @@ is not acceptable however `1 month` is acceptable.
 
 **Attention!** The value of this annotation must not contain any sign (+ or -).
 
+### @cronner-failed-delay
+
+Minimal delay between another execution of the task if previous execution ends with error. It can prevent blocking of another tasks if some task keep failing.
+It's value can be anything what is acceptable for `strtotime()` function. The only restriction is usability
+with "+" sign before the time because it is added by Cronner automatically. So `first day of this month`
+is not acceptable however `1 month` is acceptable.
+
+It's recommended to set default value to Parameters::$defaultFailedDelay, then delay is applied to all tasks.
+
+**Attention!** The value of this annotation must not contain any sign (+ or -).
+
 #### Example
 
 ```php

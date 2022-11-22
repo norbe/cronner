@@ -60,6 +60,7 @@ class ParametersParsingTest extends TestCase
 				[
 					Parameters::TASK => 'E-mail notifications',
 					Parameters::PERIOD => '5 minutes',
+					Parameters::FAILED_DELAY => '10 minutes,
 					Parameters::DAYS => null,
 					Parameters::DAYS_OF_MONTH => null,
 					Parameters::TIME => null,
@@ -70,6 +71,7 @@ class ParametersParsingTest extends TestCase
 				[
 					Parameters::TASK => 'Bileto\CronnerTests\Objects\TestObject - test02',
 					Parameters::PERIOD => '1 hour',
+					Parameters::FAILED_DELAY => '10 minutes,
 					Parameters::DAYS => ['Mon', 'Wed', 'Fri',],
 					Parameters::DAYS_OF_MONTH => null,
 					Parameters::TIME => [
@@ -89,6 +91,7 @@ class ParametersParsingTest extends TestCase
 				[
 					Parameters::TASK => 'Test 3',
 					Parameters::PERIOD => '17 minutes',
+					Parameters::FAILED_DELAY => '5 minutes',
 					Parameters::DAYS => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri',],
 					Parameters::DAYS_OF_MONTH => null,
 					Parameters::TIME => [
@@ -104,6 +107,7 @@ class ParametersParsingTest extends TestCase
 				[
 					Parameters::TASK => 'Test 4',
 					Parameters::PERIOD => '1 day',
+					Parameters::FAILED_DELAY => '10 minutes,
 					Parameters::DAYS => ['Sat', 'Sun',],
 					Parameters::DAYS_OF_MONTH => null,
 					Parameters::TIME => null,

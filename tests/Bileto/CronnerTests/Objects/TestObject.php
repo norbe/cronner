@@ -41,6 +41,7 @@ class TestObject
 	 * @cronner-period 17 minutes
 	 * @cronner-days working days
 	 * @cronner-time 09:00 - 10:45
+	 * @cronner-failed-delay 5 minutes
 	 */
 	public function test03(): void
 	{

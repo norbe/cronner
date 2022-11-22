@@ -53,10 +53,11 @@ class FileStorage implements ITimestampStorage
 	{
 		$filepath = $this->buildFilePath();
 		file_put_contents($filepath, $now->format(self::DATETIME_FORMAT));
+		$this->unsetLastTryTime();
 	}
 
 	/**
-	 * Returns date and time of last cron task invocation.
+	 * Returns date and time of last successful cron task invocation.
 	 */
 	public function loadLastRunTime(): ?DateTimeInterface
 	{
@@ -73,12 +74,44 @@ class FileStorage implements ITimestampStorage
 	/**
 	 * Builds file path from directory and task name.
 	 */
-	private function buildFilePath(): string
+	private function buildFilePath(bool $forLastTry = false): string
 	{
 		if ($this->taskName === null) {
 			throw new EmptyTaskNameException('Task name was not set.');
 		}
 
-		return SafeStream::PROTOCOL . '://' . $this->directory . '/' . sha1($this->taskName);
+		return SafeStream::PROTOCOL . '://' . $this->directory . '/' . sha1($this->taskName) . ($forLastTry ? '_try' : '');
+	}
+
+	/**
+	 * Saves current date and time as last invocation try time.
+	 */
+	public function saveLastTryTime(DateTimeInterface $now): void
+	{
+		$filepath = $this->buildFilePath(true);
+		file_put_contents($filepath, $now->format(self::DATETIME_FORMAT));
+	}
+
+	private function unsetLastTryTime()
+	{
+		$filepath = $this->buildFilePath(true);
+		if (file_exists($filepath)) {
+			unlink($filepath);
+		}
+	}
+
+	/**
+	 * Returns date and time of last cron task invocation try.
+	 */
+	public function loadLastTryTime(): ?DateTimeInterface
+	{
+		$date = null;
+		$filepath = $this->buildFilePath(true);
+		if (file_exists($filepath)) {
+			$date = file_get_contents($filepath);
+			$date = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
+		}
+
+		return $date ? $date : null;
 	}
 }

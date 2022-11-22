@@ -81,6 +81,7 @@ final class Task
 		return $parameters->isInDay($now)
 			&& $parameters->isInTime($now)
 			&& $parameters->isNextPeriod($now, $this->timestampStorage->loadLastRunTime())
+			&& $parameters->isNextTryAllowed($now, $this->timestampStorage->loadLastTryTime())
 			&& $parameters->isInDayOfMonth($now);
 	}
 
@@ -94,8 +95,9 @@ final class Task
 	 */
 	public function __invoke(DateTimeInterface $now): void
 	{
-		$this->method->invoke($this->object);
 		$this->timestampStorage->setTaskName($this->getName());
+		$this->timestampStorage->saveLastTryTime($now);
+		$this->method->invoke($this->object);
 		$this->timestampStorage->saveRunTime($now);
 		$this->timestampStorage->setTaskName();
 	}

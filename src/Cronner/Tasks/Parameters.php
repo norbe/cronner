@@ -28,8 +28,12 @@ final class Parameters
 
 	public const TIME = 'cronner-time';
 
+	public const FAILED_DELAY = 'cronner-failed-delay';
+
 	/** @var array<mixed> */
 	private array $values;
+
+	public static $defaultFailedDelay;
 
 	/**
 	 * @param array<mixed> $values
@@ -69,6 +73,9 @@ final class Parameters
 			Parameters::PERIOD => $reflectionSupport->hasMethodAnnotation($method, Parameters::PERIOD)
 				? Parser::parsePeriod((string) $reflectionSupport->getMethodAnnotation($method,Parameters::PERIOD))
 				: null,
+			Parameters::FAILED_DELAY => $reflectionSupport->hasMethodAnnotation($method, Parameters::FAILED_DELAY)
+				? Parser::parsePeriod((string) $reflectionSupport->getMethodAnnotation($method,Parameters::FAILED_DELAY))
+				: self::$defaultFailedDelay,
 			Parameters::DAYS => $reflectionSupport->hasMethodAnnotation($method, Parameters::DAYS)
 				? Parser::parseDays((string) $reflectionSupport->getMethodAnnotation($method,Parameters::DAYS))
 				: null,
@@ -137,6 +144,20 @@ final class Parameters
 			return false;
 		}
 
+		return true;
+	}
+
+	/**
+	 * Returns true if we can do another try of failed task.
+	 */
+	public function isNextTryAllowed(DateTimeInterface $now, DateTimeInterface $lastTryTime = null): bool
+	{
+		if ($lastTryTime !== null && !$lastTryTime instanceof DateTimeImmutable && !$lastTryTime instanceof DateTime) {
+			throw new InvalidArgumentException;
+		}
+		if(isset($this->values[Parameters::FAILED_DELAY]) && $this->values[Parameters::FAILED_DELAY]) {
+			return $lastTryTime === null || $lastTryTime->modify('+ ' . $this->values[Parameters::FAILED_DELAY]) <= $now;
+		}
 		return true;
 	}
 

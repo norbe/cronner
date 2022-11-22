@@ -16,6 +16,8 @@ final class DummyStorage implements ITimestampStorage
 	private ?string $taskName;
 	/** @var DateTimeInterface|null */
 	private $runTime;
+	/** @var DateTimeInterface|null */
+	private $lastTryTime;
 
 	/**
 	 * Sets name of current task.
@@ -39,5 +41,15 @@ final class DummyStorage implements ITimestampStorage
 	public function loadLastRunTime(): ?DateTimeInterface
 	{
 		return $this->runTime;
+	}
+
+	public function saveLastTryTime(DateTimeInterface $tryTime): void
+	{
+		$this->lastTryTime = $tryTime;
+	}
+
+	public function loadLastTryTime(): ?DateTimeInterface
+	{
+		return $this->lastTryTime;
 	}
 }

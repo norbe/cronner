@@ -15,12 +15,21 @@ interface ITimestampStorage
 	public function setTaskName(?string $taskName = null): void;
 
 	/**
-	 * Saves current date and time as last invocation time.
+	 * Saves current date and time as last successful invocation time.
 	 */
 	public function saveRunTime(DateTimeInterface $runTime): void;
+	/**
+	 * Saves current date and time as last invocation try time.
+	 */
+	public function saveLastTryTime(DateTimeInterface $tryTime): void;
 
 	/**
-	 * Returns date and time of last cron task invocation.
+	 * Returns date and time of last successful cron task invocation.
 	 */
 	public function loadLastRunTime(): ?DateTimeInterface;
+
+	/**
+	 * Returns date and time of last cron task invocation try.
+	 */
+	public function loadLastTryTime(): ?DateTimeInterface;
 }
