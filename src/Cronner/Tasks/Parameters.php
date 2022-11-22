@@ -19,11 +19,14 @@ final class Parameters
 	const DAYS = 'cronner-days';
 	const DAYS_OF_MONTH = 'cronner-days-of-month';
 	const TIME = 'cronner-time';
+	const FAILED_DELAY = 'cronner-failed-delay';
 
 	/**
 	 * @var array
 	 */
 	private $values;
+
+	public static $defaultFailedDelay;
 
 	/**
 	 * @param array $values
@@ -93,6 +96,22 @@ final class Parameters
 	}
 
 	/**
+	 * Returns true if we can do another try of failed task.
+	 */
+	public function isNextTryAllowed(DateTimeInterface $now, DateTimeInterface $lastTryTime = null): bool
+	{
+		if ($lastTryTime !== NULL
+			&& !$lastTryTime instanceof \DateTimeImmutable 
+			&& !$lastTryTime instanceof \DateTime) {
+			throw new InvalidArgumentException;
+		}
+		if(isset($this->values[static::FAILED_DELAY]) && $this->values[static::FAILED_DELAY]) {
+			return $lastTryTime === NULL || $lastTryTime->modify('+ ' . $this->values[static::FAILED_DELAY]) <= $now;
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Returns true if current time is next period of invocation.
 	 */
 	public function isNextPeriod(DateTimeInterface $now, DateTimeInterface $lastRunTime = NULL) : bool
@@ -136,6 +155,9 @@ final class Parameters
 			static::PERIOD => $method->hasAnnotation(Parameters::PERIOD)
 				? Parser::parsePeriod((string) $method->getAnnotation(Parameters::PERIOD))
 				: NULL,
+			static::FAILED_DELAY => $method->hasAnnotation(Parameters::FAILED_DELAY)
+				? Parser::parsePeriod((string) $method->getAnnotation(Parameters::FAILED_DELAY))
+				: self::$defaultFailedDelay,
 			static::DAYS => $method->hasAnnotation(Parameters::DAYS)
 				? Parser::parseDays((string) $method->getAnnotation(Parameters::DAYS))
 				: NULL,

@@ -157,6 +157,91 @@ class ParametersTest extends \TestCase
 	}
 
 	/**
+	 * @dataProvider dataProviderIsNextTryAllowed
+	 * @param bool $expected
+	 * @param DateTimeInterface $now
+	 * @param DateTimeInterface|null $lastRunTime
+	 * @param array $parameters
+	 */
+	public function testDetectsIfNowIsNextTryAllowed(bool $expected, DateTimeInterface $now, DateTimeInterface $lastTryTime = null, array $parameters)
+	{
+		$params = new Parameters($parameters);
+		Assert::same($expected, $params->isNextTryAllowed($now, $lastTryTime));
+	}
+
+	public function dataProviderIsNextTryAllowed(): array
+	{
+		return [
+			[
+				true,
+				new \DateTimeImmutable('2013-02-03 17:00:00'),
+				new \DateTimeImmutable('2013-02-03 16:54:59'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:54:59'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:55:00'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:55:01'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:55:05'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				false,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:55:06'),
+				[Parameters::FAILED_DELAY => '5 minutes',],
+			],
+			[
+				false,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:55:01'),
+				[Parameters::FAILED_DELAY => '1 hour',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:00:00'),
+				[Parameters::FAILED_DELAY => '1 hour',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				new Nette\Utils\DateTime('2013-02-03 16:00:00'),
+				[],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				null,
+				[Parameters::FAILED_DELAY => '1 hour',],
+			],
+			[
+				true,
+				new Nette\Utils\DateTime('2013-02-03 17:00:00'),
+				null,
+				[],
+			],
+		];
+	}
+
+	/**
 	 * @dataProvider dataProviderIsInDay
 	 * @param bool $expected
 	 * @param array $parameters

@@ -41,4 +41,13 @@ class DummyStorage implements ITimestampStorage
 		return NULL; // Dummy
 	}
 
+	public function saveLastTryTime(DateTimeInterface $tryTime): void
+	{
+		// Dummy
+	}
+
+	public function loadLastTryTime(): ?DateTimeInterface
+	{
+		return NULL; // Dummy
+	}
 }

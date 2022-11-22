@@ -24,10 +24,23 @@ interface ITimestampStorage
 	public function saveRunTime(DateTimeInterface $now);
 
 	/**
+	 * Saves current date and time as last invocation try time.
+	 */
+	public function saveLastTryTime(DateTimeInterface $tryTime);
+
+	/**
 	 * Returns date and time of last cron task invocation.
 	 *
 	 * @return DateTimeInterface|null
 	 */
 	public function loadLastRunTime();
+
+
+	/**
+	 * Returns date and time of last cron task invocation try.
+	 *
+	 * @return DateTimeInterface|null
+	 */
+	public function loadLastTryTime();
 
 }
