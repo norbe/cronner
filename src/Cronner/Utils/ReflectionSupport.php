@@ -36,8 +36,11 @@ class ReflectionSupport
 	/**
 	 * @return array<mixed>
 	 */
-	private function parseDocComment(string $docComment): array
+	private function parseDocComment(string|false $docComment): array
 	{
+		if ($docComment === false) {
+			return [];
+		}
 		static $tokens = ['true' => true, 'false' => false, 'null' => null, '' => true];
 
 		$res = [];
